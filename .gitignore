@@ -1,0 +1,5 @@
+boot.scr.uimg
+vmlinuz-4.19.0-6-marvell
+initrd.gz
+kirkwood-iomega_ix2_200.dtb
+.idea/

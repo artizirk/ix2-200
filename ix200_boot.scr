@@ -1,0 +1,18 @@
+echo ========================
+echo Booting from the network
+echo ========================
+
+env set loadaddr   0x00800000
+env set fdtaddr    0x01800000
+env set initrdaddr 0x01A00000
+
+env set uimage /vmlinuz-4.19.0-6-marvell
+env set initrdfile /initrd.gz
+env set fdtfile /kirkwood-iomega_ix2_200.dtb
+
+env set bootargs console=ttyS0,115200 panic=1
+
+tftp ${loadaddr} ${uimage}
+tftp ${fdtaddr} ${fdtfile}
+tftp ${initrdaddr} ${initrdfile}
+bootm ${loadaddr} ${initrdaddr} ${fdtaddr}
