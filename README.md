@@ -99,10 +99,66 @@ bootm 0x00800000 0x01A00000
 
 # 6. Install debian like normal
 
+Create a seperate /boot partiton of about 200MB size with **ext2** file system!
+
 Installer might tell you that it cant find any kernels to install, simply say `continue without a kernel`
 
-# 7. todo
+Mark down the kernel args the installer gives you. Probably you need the `root=<device>` kernel argument line.
 
+# 7. Install kernel
+
+Before rebooting in the installer you have to change into shell window by pressing `ctrl+a` and then `n`
+
+    chroot /target
+
+and then install kernel
+
+    apt install linux-image-marvell
+
+After that we need to create uboot image files
+
+    cd /boot
+    cp /usr/lib/linux-image-4.19.0-6-marvell/kirkwood-iomega_ix2_200.dtb /boot
+    cat vmlinuz-4.19.0-6-marvell kirkwood-iomega_ix2_200.dtb > vmlinuz_with_dtb
+    mkimage -A arm -O linux -T kernel  -C none -a 0x00008000 -e 0x00008000 -n kernel -d vmlinuz_with_dtb uImage
+    mkimage -A arm -O linux -T ramdisk -C none -a 0x00000000 -e 0x00000000 -n initramfs -d initrd.gz uInitrd
+
+# 8. Finish install
+
+# 9. Test bootup
+
+In u-boot prompt
+
+Start hdd support
+
+    ide reset
+
+List files in boot partition
+
+    ext2ls ide 0:1 /
+
+If you can see uImage and uInitrd then you can try to boot them
+
+    ext2load ide 0:1 0x00800000 /uImage
+    ext2load ide 0:1 0x01A00000 /uInitrd
+    setenv bootargs console=ttyS0,115200 root=/dev/<device>
+    bootm 0x00800000 0x01A00000
+
+# 10. configure autoboot
+
+in u-boot prompt
+
+    setenv loadfiles 'ide reset; ext2load ide 0:1 0x00800000 /uImage; ext2load ide 0:1 0x01A00000 /uInitrd'
+    setenv bootargs console=ttyS0,115200 root=/dev/<device>
+    setenv bootcmd 'run loadfiles; bootm 0x00800000 0x01A00000'
+
+And thest if those commands work
+
+    boot
+
+If it boothed then you can reboot to u-boot prompt, run those setenv command again and this time instead of boot you save the variables with
+
+    saveenv
 
 # NET BOOT
 
