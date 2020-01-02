@@ -1,4 +1,4 @@
-# THIS IS UNTESTED
+# Follow at your own risk!
 
 but those should be general instructions for getting normal Debian installed
 onto iomega ix2-200 NAS
@@ -14,6 +14,8 @@ onto iomega ix2-200 NAS
 First figure out your usb stick name
 
     lsblk
+
+**Make sure that your usb stick uses DOS/MBR partition table!!**
 
 Then format it with ext2. Replace /dev/sdX1 with your stick name
 
@@ -98,8 +100,9 @@ bootm 0x00800000 0x01A00000
 ```
 
 # 6. Install debian like normal
+U-Boot on the ix2-200 only understands **DOS/MBR** partiton tables, GPT will not work. Some hacish protected MBR GPT hybrid might also work but thats untested!
 
-Create a seperate /boot partiton of about 200MB size with **ext2** file system!
+Create a seperate /boot partiton type of about 200MB size with **ext2** file system!
 
 Installer might tell you that it cant find any kernels to install, simply say `continue without a kernel`
 
