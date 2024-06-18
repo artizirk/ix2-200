@@ -1,7 +1,33 @@
 # Follow at your own risk!
 
-but those should be general instructions for getting normal Debian installed
-onto iomega ix2-200 NAS
+But those should be general instructions for getting normal Debian installed
+onto iomega ix2-200 NAS. Insructions here also asume that you already have Debian/Ubuntu
+running somewhere like a PC or virtual-machine with usb passthough or a RaspberryPi.
+
+# ** You need USB UART dongle **
+To get access to the bootup messages and configure the u-boot(BIOS) on the Iomega
+you need to get your hands on a 3.3v TTL USB UART converter board (NOT RS232 as that runs on +-12v)
+
+For example: https://www.amazon.de/-/en/UART-TTL-Adapter-Converter-Compatible-Arduino/dp/B0B7RHPMT7/
+
+![ch343-usb-uart-board-1.jpg](ch343-usb-uart-board-1.jpg)
+
+You need to hook it up to the back side of the Iomega on to JP1 (also marks PIN 1)
+
+![ix2-200-serial-connector.jpg](ix2-200-serial-connector.jpg)
+
+    Pin 1: Do NOT connect. This pin provides +3.3V and is not required for USB UART serial adapters.
+    Pin 2: TxD. Connect to RxD of the serial adapter.
+    Pin 3: GND. Connect to GND of the serial adapter.
+    Pin 4: RxD. Connect to TxD of the serial adapter.
+
+After that is done open any [Serial Terminal Software](https://linux-sunxi.org/UART#Software) at Baud 115200, 8bit, 1stop parity none
+
+Remove all HDD-s and power the iomega on. Now on the U-Boot prompt run `printenv` command 
+and save all the output to `ix2-200-config-backup.txt`. Contents of that file is required to restore
+original firmware if you want to in the future.
+
+Source: https://kiljan.org/2021/04/22/installing-arch-linux-arm-on-an-iomega-ix2-200/#consolepreparation
 
 # Files on usb stick
 
