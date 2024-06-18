@@ -64,7 +64,7 @@ First lets cd to the mounted usb device
 And download files there
 
     wget http://ftp.debian.org/debian/dists/stable/main/installer-armel/current/images/kirkwood/device-tree/kirkwood-iomega_ix2_200.dtb
-    wget http://ftp.debian.org/debian/dists/stable/main/installer-armel/current/images/kirkwood/netboot/vmlinuz-4.19.0-6-marvell
+    wget http://ftp.debian.org/debian/dists/stable/main/installer-armel/current/images/kirkwood/netboot/vmlinuz-6.1.0-18-marvell
     wget http://ftp.debian.org/debian/dists/stable/main/installer-armel/current/images/kirkwood/netboot/initrd.gz
 
 # 3. Build U-boot files
@@ -72,7 +72,7 @@ And download files there
 iomega has a realy old u-boot that does not support seperate device tree files.
 We will append device tree dtb file end of the kernel images
 
-    cat vmlinuz-4.19.0-6-marvell kirkwood-iomega_ix2_200.dtb > vmlinuz_with_dtb
+    cat vmlinuz-6.1.0-18-marvell kirkwood-iomega_ix2_200.dtb > vmlinuz_with_dtb
 
 then we have to wrap the kernel and initrd into u-boot image files
 
@@ -133,7 +133,7 @@ Those memory addresses are pretty random, you can use `memlayout.py` script to c
 At least thats what is written into the [Device Tree](https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm/boot/dts/kirkwood-iomega_ix2_200.dts?h=v4.19)
 
 # 6. Install debian like normal
-U-Boot on the ix2-200 only understands **DOS/MBR** partiton tables, GPT will not work. Some hacish protected MBR GPT hybrid might also work but thats untested!
+U-Boot on the ix2-200 only understands **DOS/MBR** partiton tables, GPT will not work. Some hackish protected MBR GPT hybrid might also work but thats untested!
 
 Create a seperate /boot partiton type of about 200MB size with **ext2** file system!
 
@@ -154,8 +154,8 @@ and then install kernel
 After that we need to create uboot image files
 
     cd /boot
-    cp /usr/lib/linux-image-4.19.0-6-marvell/kirkwood-iomega_ix2_200.dtb /boot
-    cat vmlinuz-4.19.0-6-marvell kirkwood-iomega_ix2_200.dtb > vmlinuz_with_dtb
+    cp /usr/lib/linux-image-6.1.0-18-marvell/kirkwood-iomega_ix2_200.dtb /boot
+    cat vmlinuz-6.1.0-18-marvell kirkwood-iomega_ix2_200.dtb > vmlinuz_with_dtb
     mkimage -A arm -O linux -T kernel  -C none -a 0x00008000 -e 0x00008000 -n kernel -d vmlinuz_with_dtb uImage
     mkimage -A arm -O linux -T ramdisk -C none -a 0x00000000 -e 0x00000000 -n initramfs -d initrd.gz uInitrd
 
@@ -209,6 +209,9 @@ Replace `VERSION` with your new kernel version. Version number should be visible
     cat vmlinuz-VERSION-marvell kirkwood-iomega_ix2_200.dtb > vmlinuz_with_dtb
     mkimage -A arm -O linux -T kernel  -C none -a 0x00008000 -e 0x00008000 -n kernel -d vmlinuz_with_dtb uImage
     mkimage -A arm -O linux -T ramdisk -C none -a 0x00000000 -e 0x00000000 -n initramfs -d initrd.img-VERSION-marvell uInitrd
+
+## TODO
+It is probably possible to automate those steps with some APT hooks but I haven't looked into it yet.
 
 # Links
 
